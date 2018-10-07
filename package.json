@@ -9,6 +9,7 @@
   "author": "@juan_gf",
   "license": "ISC",
   "dependencies": {
+    "elasticsearch": "^15.1.1",
     "express": "^4.16.3"
   }
 }
