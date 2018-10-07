@@ -9,7 +9,7 @@ const es = elastics.Client({
 });
 
 app.get('/', (req, res) => {
-    res.send('The Game server is running');
+    res.send('The Easy Game Server is running');
 });
 
 /**
@@ -38,4 +38,4 @@ app.get('/players', (req, res) => {
     });
 });
 
-app.listen(port, () => console.log(`Game server app listening on port ${port}!`));
+app.listen(port, () => console.log(`Easy Game Server listening on port ${port}!`));
