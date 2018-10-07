@@ -1,27 +1,41 @@
-const express = require('express');
-const app     = express();
-const port    = 3000;
-
+const express  = require('express');
 const elastics = require('elasticsearch');
+const app      = express();
+const port     = 3000;
+
+// Elastisearch client
 const es = elastics.Client({
     host: 'localhost:9200'
 });
 
-let players   = [
-    {
-        id : 1,
-        name : 'Juan'
-    },
-    {
-        id : 2,
-        name : 'Carolina'
-    }
-];
-
-app.get('/', (req, res) => res.send('Hello Game Server!'));
-
-app.get('/players', (req, res) => {
-    res.json(players);
+app.get('/', (req, res) => {
+    res.send('The Game server is running');
 });
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+/**
+ * Get a player
+ */
+app.get('/player/:playerId', (req, res) => {
+    es.get({
+        index: 'game',
+        type: 'player',
+        id: req.params.playerId
+    })
+    .then(function(response) {
+        res.send(response._source);
+    });
+});
+
+/**
+ * Get all the registered players
+ */
+app.get('/players', (req, res) => {
+    es.search({
+        index: 'game'
+    })
+    .then(function(response) {
+        res.send(response.hits.hits);
+    });
+});
+
+app.listen(port, () => console.log(`Game server app listening on port ${port}!`));
