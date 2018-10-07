@@ -1,0 +1,14 @@
+{
+  "name": "game-server",
+  "version": "1.0.0",
+  "description": "Node game server",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "@juan_gf",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
