@@ -1,9 +1,11 @@
-const express  = require('express');
-const elastics = require('elasticsearch');
-const helmet   = require('helmet');
-const token    = require('token');
-const app      = express();
-const port     = 3000;
+const express    = require('express');
+const elastics   = require('elasticsearch');
+const helmet     = require('helmet');
+const token      = require('token');
+const HttpStatus = require('http-status-codes');
+const bodyParser = require('body-parser');
+const app        = express();
+const port       = 3000;
 
 // Elastisearch client
 const es = elastics.Client({
@@ -13,14 +15,25 @@ const es = elastics.Client({
 // Security http headers
 app.use(helmet());
 
+// Configure the token generator
 token.defaults.secret   = 'agoodsecret';
-token.defaults.timeStep = 20;
+token.defaults.timeStep = 24;
 
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json());
+
+// Check security
 app.use(function (req, res, next) {
-    let token = req.headers['x-easy-server-token'];
+    let tokenValue = req.headers['x-easy-server-token'];
+    let id         = req.headers['x-easy-server-id'];
     
-    if (req.path !== '/register') {
-        
+    if (req.path !== '/register' && !token.verify(id, tokenValue)) {
+        res
+            .status(HttpStatus.UNAUTHORIZED)
+            .json({
+                error: HttpStatus.getStatusText(HttpStatus.UNAUTHORIZED)
+            });
+        return;
     }
 
     next();
@@ -34,17 +47,20 @@ app.get('/', (req, res) => {
  * Register unique device/player
  */
 app.post('/register', (req, res) => {
-    if (!req.params.id) {
-        res.status(400);
-        res.send('None shall pass');
+    if (!req.body.id) {
+        res
+            .status(HttpStatus.BAD_REQUEST)
+            .json({
+                error: 'missing parameters'
+            });
         return;
     }
 
     let ip       = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    let newToken = token.generate(req.params.id + '|' + ip);
+    let newToken = token.generate(req.body.id);
 
     res.json({
-        token: token
+        token: newToken
     });
 });
 
