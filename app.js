@@ -1,5 +1,6 @@
 const express  = require('express');
 const elastics = require('elasticsearch');
+const helmet   = require('helmet');
 const app      = express();
 const port     = 3000;
 
@@ -7,6 +8,9 @@ const port     = 3000;
 const es = elastics.Client({
     host: 'localhost:9200'
 });
+
+// Security http headers
+app.use(helmet());
 
 app.get('/', (req, res) => {
     res.send('The Easy Game Server is running');
