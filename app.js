@@ -1,6 +1,7 @@
 const express  = require('express');
 const elastics = require('elasticsearch');
 const helmet   = require('helmet');
+const token    = require('token');
 const app      = express();
 const port     = 3000;
 
@@ -12,8 +13,39 @@ const es = elastics.Client({
 // Security http headers
 app.use(helmet());
 
+token.defaults.secret   = 'agoodsecret';
+token.defaults.timeStep = 20;
+
+app.use(function (req, res, next) {
+    let token = req.headers['x-easy-server-token'];
+    
+    if (req.path !== '/register') {
+        
+    }
+
+    next();
+})
+
 app.get('/', (req, res) => {
-    res.send('The Easy Game Server is running');
+    res.json(req.headers);
+});
+
+/**
+ * Register unique device/player
+ */
+app.post('/register', (req, res) => {
+    if (!req.params.id) {
+        res.status(400);
+        res.send('None shall pass');
+        return;
+    }
+
+    let ip       = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    let newToken = token.generate(req.params.id + '|' + ip);
+
+    res.json({
+        token: token
+    });
 });
 
 /**
