@@ -17,7 +17,7 @@ app.use(helmet());
 
 // Configure the token generator
 token.defaults.secret   = 'agoodsecret';
-token.defaults.timeStep = 24;
+token.defaults.timeStep = 60 * 60 * 24;
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
