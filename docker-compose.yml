@@ -4,11 +4,10 @@ services:
         image: elasticsearch:5-alpine
         container_name: egs-elasticsearch
         ports:
-            - 5000:5000
+            - 9200:9200
+            - 9300:9300
     kibana:
         image: kibana
         container_name: egs-kibana
         ports:
-            - 9200:9200
-            - 9300:9300
             - 5601:5601
