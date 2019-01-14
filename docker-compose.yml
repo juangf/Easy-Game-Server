@@ -11,3 +11,4 @@ services:
         container_name: egs-kibana
         ports:
             - 5601:5601
+            
